@@ -4,8 +4,5 @@
     {
         public string Title { get; set; }
         public IEnumerable<IMenuItem> MenuItems { get; set; }
-
-        public string SelectionMenu();
-        public string ListMenu();
     }
 }

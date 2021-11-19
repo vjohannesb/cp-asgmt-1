@@ -20,6 +20,7 @@ namespace CPAsgmt1.Models.Menu
         {
             _menu = _createMenu();
             _menu.Title = title;
+            _menu.MenuItems = new List<IMenuItem>();
         }
 
         public void AddMenuItem(int selector, string name, Action? run)
@@ -27,7 +28,7 @@ namespace CPAsgmt1.Models.Menu
             _menu.MenuItems = _menu.MenuItems.Append(_createMenuItem(selector, name, run));
         }
 
-        public IMenu CreateMenu(string? returnKey, Action? returnAction)
+        public IMenu CreateMenu(string? returnKey = null, Action? returnAction = null)
         {
             if (!string.IsNullOrEmpty(returnKey))
                 _menu.MenuItems = _menu.MenuItems.Append(_createMenuItem(0, returnKey, returnAction));

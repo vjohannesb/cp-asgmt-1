@@ -33,10 +33,10 @@ namespace CPAsgmt1
             builder.RegisterType<Animal>().As<IAnimal>();
             builder.RegisterType<Bill>().As<IBill>();
 
+            builder.RegisterType<Menu>().As<IMenu>();
             builder.RegisterType<MenuItem>().As<IMenuItem>();
-            builder.RegisterType<ConsoleMenu>().As<IMenu>();
-            builder.RegisterType<ConsoleOutput>().As<IOutput>();
-            builder.RegisterType<ConsoleInput>().As<IInput>();
+
+            builder.RegisterType<ConsoleIO>().As<IIO>();
 
             builder.RegisterType<MenuFactory>().As<IMenuFactory>();
             builder.RegisterType<BillFactory>().As<IBillFactory>();
