@@ -5,6 +5,7 @@ using CPAsgmt1.Interfaces.Customers;
 using CPAsgmt1.Interfaces.IO;
 using CPAsgmt1.Interfaces.Kennel;
 using CPAsgmt1.Interfaces.Menu;
+using System.Linq;
 
 namespace CPAsgmt1
 {
@@ -20,7 +21,7 @@ namespace CPAsgmt1
         private readonly IAnimalFactory _animalFactory;
         private readonly ICustomerFactory _customerFactory;
 
-        private IMenu _mainMenu;
+        private readonly IMenu _mainMenu;
 
         public Application(IIO io, IMenuFactory menuFactory,
             IKennelFactory kennelFactory, IAnimalFactory animalFactory,
@@ -35,13 +36,28 @@ namespace CPAsgmt1
             _customerFactory = customerFactory;
 
             _kennel = _kennelFactory.CreateKennel("Floofers", 19.99m);
+            _mainMenu = CreateMainMenu();
 
+            Init();
+        }
+        public void Init()
+        {
             _io.Init();
             AddMockData(_kennel, _customerFactory, _animalFactory, _kennelFactory);
-
-            _mainMenu = CreateMainMenu();
         }
 
+        public void Run()
+        {
+            while (true)
+            {
+                var selection = _io.GetSelection(_mainMenu, "Enter selection: ", "Exit");
+                if (selection == null) return;
+
+                selection.Run?.Invoke();
+            }
+        }
+
+        // For assignment / examination
         private static void AddMockData(IKennel k, ICustomerFactory cf,
             IAnimalFactory af, IKennelFactory kf)
         {
@@ -57,32 +73,15 @@ namespace CPAsgmt1
 
         private IMenu CreateMainMenu()
         {
-            int i = 0;
             _menuFactory.InitMenu(_kennel.Name);
-            _menuFactory.AddMenuItem(++i, "Register customer", AddCustomer);
-            _menuFactory.AddMenuItem(++i, "Register animal", AddAnimal);
-            _menuFactory.AddMenuItem(++i, "View customers", ViewCustomers);
-            _menuFactory.AddMenuItem(++i, "View animals", ViewAnimals);
-            _menuFactory.AddMenuItem(++i, "View animals at kennel", ViewAnimalsAtKennel);
-            _menuFactory.AddMenuItem(++i, "Check in animal", CheckInAnimal);
-            _menuFactory.AddMenuItem(++i, "Check out animal", CheckOutAnimal);
-            return _menuFactory.CreateMenu("Exit", () => Environment.Exit(0));
-        }
-
-        public void Init() { }
-
-        public void Run()
-        {
-            var keys = _mainMenu.MenuItems.Select(mi => mi.Name);
-            var items = _mainMenu.MenuItems;
-
-            while (true)
-            {
-                var selection = _io.GetSelection(_mainMenu, "Enter selection: ");
-                if (selection == null) return;
-
-                selection.Run?.Invoke();
-            }
+            _menuFactory.AddMenuItem("Register customer", AddCustomer);
+            _menuFactory.AddMenuItem("Register animal", AddAnimal);
+            _menuFactory.AddMenuItem("View customers", ViewCustomers);
+            _menuFactory.AddMenuItem("View animals", ViewAnimals);
+            _menuFactory.AddMenuItem("View animals at kennel", ViewAnimalsAtKennel);
+            _menuFactory.AddMenuItem("Check in animal", CheckInAnimal);
+            _menuFactory.AddMenuItem("Check out animal", CheckOutAnimal);
+            return _menuFactory.CreateMenu();
         }
 
         private void Pause(string? message = null)
@@ -91,21 +90,6 @@ namespace CPAsgmt1
                 _io.WriteLine(message);
             _io.Write("Press any key to continue.");
             _io.ReadKey(false);
-        }
-
-        private void AddAnimal()
-        {
-            string? name;
-            name = _io.GetAnswer("Register animal", "Name: ", true);
-            if (string.IsNullOrEmpty(name)) return;
-
-            var customers = _kennel.GetCustomers();
-            var customerNames = customers.Select(c => c.Name);
-            var owner = _io.GetSelection("Customers", "Select owner: ", customerNames, customers);
-            if (owner == null) return;
-
-            _kennel.AddAnimal(_animalFactory.CreateAnimal(name, owner));
-            Pause($"{name} has been registered!");
         }
 
         private void AddCustomer()
@@ -119,9 +103,24 @@ namespace CPAsgmt1
             Pause($"{name} has been registered!");
         }
 
+        private void AddAnimal()
+        {
+            string? name;
+            name = _io.GetAnswer("Register animal", "Name: ", true);
+            if (name == null) return;
+
+            var customers = _kennel.GetCustomers();
+            var customerNames = customers.Select(c => c.Name);
+            var owner = _io.GetSelection("Customers", "Select owner: ", customerNames, customers, "Cancel");
+            if (owner == null) return;
+
+            _kennel.AddAnimal(_animalFactory.CreateAnimal(name, owner));
+            Pause($"{name} has been registered!");
+        }
+
         private void ViewAnimals()
         {
-            var items = _kennel.GetAnimals().Select(a => a.Name);
+            var items = _kennel.GetAnimals().Select(a => $"{a.Name} ({a.Owner.Name})");
             _io.ListItems("Animals", items, true);
             Pause();
         }
@@ -143,27 +142,44 @@ namespace CPAsgmt1
         private void CheckInAnimal()
         {
             var animals = _kennel.GetAnimals().Where(a => !a.IsAtKennel);
+            if (!animals.Any())
+            {
+                Pause("There are no registered animals that are not at the kennel at the moment.");
+                return;
+            }
+
             var keys = animals.Select(a => a.Name);
 
-            var animal = _io.GetSelection("Animals", "Select animal: ", keys, animals);
+            var animal = _io.GetSelection("Animals", "Select animal: ", keys, animals, "Cancel");
             if (animal == null) return;
+
+            if (animal.Bill != null && !animal.Bill.Paid)
+            {
+                Pause("You cannot check in an animal with an unpaid bill.");
+                return;
+            }
 
             List<IService> selectedServices = new();
             var availableServices = _kennel.GetServices();
-            foreach (var service in availableServices)
+            while (availableServices.Any())
             {
-                var prompt = $"Would you like to add {service.Name} for only {service.Price}kr? [Y/N] ";
-                var answer = _io.GetAnswer("Services", prompt, true);
-                if (string.IsNullOrEmpty(answer)) break;
+                var serviceNames = availableServices.Select(s => s.Name);
+                var service = _io.GetSelection("Services", "Select service: ", serviceNames, availableServices, "None");
+                if (service == null) break;
 
-                if (answer.ToLower().Contains('y'))
-                    selectedServices.Add(service);
+                selectedServices.Add(service);
+                availableServices = availableServices.Where(s => s != service);
             }
 
+            _billFactory.CreateBill(animal, _kennel.CostPerDay, selectedServices);
 
             animal.IsAtKennel = true;
-            var message = $"{animal.Name} has been checked in! Selected services: ";
-            message += string.Join(", ", selectedServices.Select(s => s.Name));
+            var message = $"{animal.Name} has been checked in!";
+            if (selectedServices.Any())
+            {
+                message += " Extra services: ";
+                message += string.Join(", ", selectedServices.Select(s => s.Name));
+            }
 
             Pause(message);
         }
@@ -178,18 +194,32 @@ namespace CPAsgmt1
             }
 
             var keys = animals.Select(a => a.Name);
-
             var animal = _io.GetSelection("Animals at kennel", "Select animal to check out: ", keys, animals, "Cancel");
             if (animal == null) return;
 
-            animal.IsAtKennel = true;
-            var message = $"{animal.Name} has been checked out! Total bill: ";
+            if (animal.Bill == null)
+            {
+                _io.WriteLine($"Something went wrong. There is no bill registered for {animal.Name}.");
+                return;
+            }
 
-            _io.WriteLine(message);
-            _io.ListItems($"Bill for {animal.Name}", new List<string>(), false);
-            _io.WriteLine("Total: 19.99kr");
+            animal.IsAtKennel = false;
+            animal.Bill.Close();
 
-            Pause();
+            List<string> billedServices = new() { $"Stay at {_kennel.Name} - {_kennel.CostPerDay}kr" };
+            if (animal.Bill.Services != null && animal.Bill.Services.Any())
+            {
+                var services = animal.Bill.Services.Select(s => $"{s.Name} - {s.Price}kr");
+                billedServices.AddRange(services);
+            }
+
+            _io.WriteLine($"{animal.Name} has been checked out!", true);
+            _io.ListItems($"Bill for {animal.Name}", billedServices, false);
+            _io.WriteLine($"Total: {animal.Bill.TotalCost}kr");
+            _io.WriteLine("");
+
+            Pause("Your bill is automatically paid.");
+            animal.Bill.Pay();
         }
     }
 }

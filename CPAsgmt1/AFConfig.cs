@@ -25,13 +25,12 @@ namespace CPAsgmt1
             builder.RegisterType<Application>().As<IApplication>();
 
             // Register types
-            builder.RegisterType<KennelFactory>().As<IKennelFactory>();
             builder.RegisterType<Kennel>().As<IKennel>();
             builder.RegisterType<Service>().As<IService>();
 
-            builder.RegisterType<Customer>().As<ICustomer>();
-            builder.RegisterType<Animal>().As<IAnimal>();
             builder.RegisterType<Bill>().As<IBill>();
+            builder.RegisterType<Animal>().As<IAnimal>();
+            builder.RegisterType<Customer>().As<ICustomer>();
 
             builder.RegisterType<Menu>().As<IMenu>();
             builder.RegisterType<MenuItem>().As<IMenuItem>();
@@ -41,6 +40,7 @@ namespace CPAsgmt1
             builder.RegisterType<MenuFactory>().As<IMenuFactory>();
             builder.RegisterType<BillFactory>().As<IBillFactory>();
             builder.RegisterType<AnimalFactory>().As<IAnimalFactory>();
+            builder.RegisterType<KennelFactory>().As<IKennelFactory>();
             builder.RegisterType<CustomerFactory>().As<ICustomerFactory>();
 
             return builder.Build();

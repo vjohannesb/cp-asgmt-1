@@ -1,14 +1,15 @@
-﻿using CPAsgmt1.Interfaces.Billing;
+﻿using CPAsgmt1.Interfaces.Animals;
+using CPAsgmt1.Interfaces.Billing;
 using CPAsgmt1.Interfaces.Kennel;
 
 namespace CPAsgmt1.Models.Billing
 {
     internal class Bill : IBill
     {
-        public Bill(decimal totalCost, IBillable recipient, IEnumerable<IService>? services)
+        public Bill(IAnimal recipient, decimal price, IEnumerable<IService>? services)
         {
             BillId = Guid.NewGuid();
-            TotalCost = totalCost;
+            TotalCost = price;
             Recipient = recipient;
             Services = services;
             Paid = false;
@@ -16,14 +17,17 @@ namespace CPAsgmt1.Models.Billing
 
         public Guid BillId { get; }
         public decimal TotalCost { get; set; }
-        public IBillable Recipient { get; set; }
+        public IAnimal Recipient { get; set; }
         public IEnumerable<IService>? Services { get; set; }
-        public bool Paid { get; set; }
+        public bool Paid { get; private set; }
 
-        public IBill CloseBill()
+        public void Close()
+            => TotalCost += Services?.Select(s => s.Price).Sum() ?? 0;
+
+        public void Pay()
         {
-            TotalCost += Services?.Select(s => s.Price).Sum() ?? 0;
-            return this;
+            Recipient.Bill = null;
+            Paid = true;
         }
     }
 }

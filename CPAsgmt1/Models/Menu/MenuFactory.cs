@@ -4,34 +4,35 @@ namespace CPAsgmt1.Models.Menu
 {
     internal class MenuFactory : IMenuFactory
     {
-        private IMenu _menu;
-        private readonly Func<IMenu> _createMenu;
-        private readonly Func<int, string, Action?, IMenuItem> _createMenuItem;
+        private IMenu? _menu;
+        private readonly Func<string, IEnumerable<IMenuItem>, IMenu> _createMenu;
+        private readonly Func<string, Action?, IMenuItem> _createMenuItem;
 
-        public MenuFactory(IMenu menu, Func<IMenu> createMenu,
-            Func<int, string, Action?, IMenuItem> createMenuItem)
+        public MenuFactory(Func<string, IEnumerable<IMenuItem>, IMenu> createMenu,
+            Func<string, Action?, IMenuItem> createMenuItem)
         {
-            _menu = menu;
             _createMenu = createMenu;
             _createMenuItem = createMenuItem;
         }
 
         public void InitMenu(string title)
         {
-            _menu = _createMenu();
-            _menu.Title = title;
-            _menu.MenuItems = new List<IMenuItem>();
+            _menu = _createMenu(title, new List<IMenuItem>());
         }
 
-        public void AddMenuItem(int selector, string name, Action? run)
+        public void AddMenuItem(string name, Action? run)
         {
-            _menu.MenuItems = _menu.MenuItems.Append(_createMenuItem(selector, name, run));
+            if (_menu == null) 
+                throw new Exception("Must initialize menu before adding items.");
+
+            _menu.MenuItems = _menu.MenuItems.Append(_createMenuItem(name, run));
         }
 
-        public IMenu CreateMenu(string? returnKey = null, Action? returnAction = null)
+        public IMenu CreateMenu()
         {
-            if (!string.IsNullOrEmpty(returnKey))
-                _menu.MenuItems = _menu.MenuItems.Append(_createMenuItem(0, returnKey, returnAction));
+            if (_menu == null)
+                throw new Exception("Must initialize menu before creating it.");
+
             return _menu;
         }
     }

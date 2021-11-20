@@ -1,13 +1,6 @@
-﻿using CPAsgmt1.Interfaces.Animals;
-using CPAsgmt1.Interfaces.Customers;
-using CPAsgmt1.Interfaces.IO;
-using CPAsgmt1.Interfaces.Kennel;
+﻿using CPAsgmt1.Interfaces.IO;
 using CPAsgmt1.Interfaces.Menu;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CPAsgmt1.Models.IO
 {
@@ -49,13 +42,12 @@ namespace CPAsgmt1.Models.IO
             if (!string.IsNullOrEmpty(footer))
                 WriteLine(footer);
 
-            string? input;
-            while (string.IsNullOrEmpty(input = Read(prompt)?.Trim()))
+            string? input = null;
+            while (string.IsNullOrEmpty(input))
             {
-                Write(input ?? "");
+                input = Read(prompt)?.Trim();
                 if (input == "0") return null;
             }
-
             return input;
         }
 
@@ -79,39 +71,28 @@ namespace CPAsgmt1.Models.IO
             => WriteLine(menu, overwrite);
 
         public T? GetSelection<T>(string title, string prompt,
-            IEnumerable<string> keys, IEnumerable<T> items, 
-            string? returnKey = "Cancel")
+            IEnumerable<string> keys, IEnumerable<T> items,
+            string? returnKey)
         {
             var menu = ConstructMenu(title, keys, returnKey);
             DisplayMenu(menu, true);
 
             int choice;
-            while (!IsInRange(Read(prompt), 0, items.Count(), out choice)) { }
+            string? input = null;
+            while (!IsInRange(input, 0, items.Count(), out choice))
+                input = Read(prompt);
 
             return choice == 0 ? default : items.ElementAtOrDefault(choice - 1);
         }
 
-        public IMenuItem? GetSelection(IMenu menu, string prompt)
+        private static bool IsInRange(string? input, int min, int max, out int output)
+            => int.TryParse(input, out output) && output >= min && output <= max;
+
+        public IMenuItem? GetSelection(IMenu menu, string prompt, string? returnKey)
         {
-            var builder = new StringBuilder();
-            builder.Append(ConsoleBox.Box(menu.Title));
-
-            foreach (var item in menu.MenuItems)
-                builder.AppendLine(ConsoleBox.Line(content: $" [{item.Index}] {item.Name}"));
-
-            builder.AppendLine(ConsoleBox.Line(LineType.Bottom));
-            DisplayMenu(builder.ToString(), true);
-
-            int choice;
-            while (!IsInRange(Read(prompt), 0, menu.MenuItems.Count(), out choice)) { }
-
-            return choice == 0 
-                ? default 
-                : menu.MenuItems.ElementAtOrDefault(choice - 1);
+            var keys = menu.MenuItems.Select(mi => mi.Name);
+            return GetSelection(menu.Title, prompt, keys, menu.MenuItems, returnKey);
         }
-
-        private static bool IsInRange(string? value, int min, int max, out int result)
-            => int.TryParse(value, out result) && result >= min && (result < max || result == 1);
 
         public void ListItems(string title, IEnumerable<string> items, bool overwrite)
         {
@@ -123,7 +104,7 @@ namespace CPAsgmt1.Models.IO
             for (var i = 0; i < items.Count(); i++)
                 builder.AppendLine(ConsoleBox.Line(content: $" {i + 1}. {items.ElementAt(i)}"));
 
-            builder.AppendLine(ConsoleBox.Line(LineType.Bottom));
+            builder.Append(ConsoleBox.Line(LineType.Bottom));
             DisplayMenu(builder.ToString(), overwrite);
         }
     }

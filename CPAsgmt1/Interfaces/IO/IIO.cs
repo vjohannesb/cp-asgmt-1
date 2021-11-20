@@ -1,12 +1,4 @@
-﻿using CPAsgmt1.Interfaces.Animals;
-using CPAsgmt1.Interfaces.Customers;
-using CPAsgmt1.Interfaces.Kennel;
-using CPAsgmt1.Interfaces.Menu;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CPAsgmt1.Interfaces.Menu;
 
 namespace CPAsgmt1.Interfaces.IO
 {
@@ -24,8 +16,9 @@ namespace CPAsgmt1.Interfaces.IO
 
         string ConstructMenu(string title, IEnumerable<string> items, string returnKey);
         void DisplayMenu(string menu, bool overwrite);
-        T? GetSelection<T>(string title, string prompt, IEnumerable<string> keys, IEnumerable<T> items, string? returnKey = null);
-        IMenuItem? GetSelection(IMenu menu, string prompt);
+        T? GetSelection<T>(string title, string prompt, IEnumerable<string> keys, IEnumerable<T> items, string? returnKey);
+        IMenuItem? GetSelection(IMenu menu, string prompt, string? returnKey);
+
         void ListItems(string title, IEnumerable<string> items, bool overwrite);
     }
 }

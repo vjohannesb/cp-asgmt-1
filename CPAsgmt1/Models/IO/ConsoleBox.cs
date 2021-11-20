@@ -1,5 +1,4 @@
-﻿using CPAsgmt1.Interfaces.Menu;
-using System.Text;
+﻿using System.Text;
 
 namespace CPAsgmt1.Models.IO
 {
@@ -20,7 +19,7 @@ namespace CPAsgmt1.Models.IO
             return toPad.PadLeft(padLeft, padChar).PadRight(_width, padChar);
         }
 
-        public static string Line(LineType lineType = LineType.Middle, 
+        public static string Line(LineType lineType = LineType.Middle,
             string? content = null, bool center = false, char padChar = ' ')
         {
             char left, right;

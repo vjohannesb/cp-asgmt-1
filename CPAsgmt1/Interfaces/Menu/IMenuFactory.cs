@@ -3,7 +3,7 @@
     internal interface IMenuFactory
     {
         void InitMenu(string title);
-        void AddMenuItem(int selector, string name, Action? run);
-        IMenu CreateMenu(string? returnKey = null, Action? returnAction = null);
+        void AddMenuItem(string name, Action? run);
+        IMenu CreateMenu();
     }
 }

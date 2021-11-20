@@ -1,4 +1,5 @@
-﻿using CPAsgmt1.Interfaces.Kennel;
+﻿using CPAsgmt1.Interfaces.Animals;
+using CPAsgmt1.Interfaces.Kennel;
 
 namespace CPAsgmt1.Interfaces.Billing
 {
@@ -7,9 +8,10 @@ namespace CPAsgmt1.Interfaces.Billing
         public Guid BillId { get; }
         public IEnumerable<IService>? Services { get; set; }
         public decimal TotalCost { get; set; }
-        public IBillable Recipient { get; set; }
-        public bool Paid { get; set; }
+        public IAnimal Recipient { get; set; }
+        public bool Paid { get; }
 
-        public IBill CloseBill();
+        public void Close();
+        public void Pay();
     }
 }
