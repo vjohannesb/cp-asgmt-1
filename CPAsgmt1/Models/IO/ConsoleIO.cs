@@ -16,11 +16,8 @@ namespace CPAsgmt1.Models.IO
             return Console.ReadLine();
         }
 
-        public ConsoleKeyInfo ReadKey(bool intercept)
-            => Console.ReadKey(intercept);
-
-        private static void Clear()
-            => Console.Clear();
+        public char ReadKey(bool intercept)
+            => Console.ReadKey(intercept).KeyChar;
 
         public void Write(string content, bool overwrite = false)
         {
@@ -85,9 +82,6 @@ namespace CPAsgmt1.Models.IO
             return choice == 0 ? default : items.ElementAtOrDefault(choice - 1);
         }
 
-        private static bool IsInRange(string? input, int min, int max, out int output)
-            => int.TryParse(input, out output) && output >= min && output <= max;
-
         public IMenuItem? GetSelection(IMenu menu, string prompt, string? returnKey)
         {
             var keys = menu.MenuItems.Select(mi => mi.Name);
@@ -107,5 +101,11 @@ namespace CPAsgmt1.Models.IO
             builder.Append(ConsoleBox.Line(LineType.Bottom));
             DisplayMenu(builder.ToString(), overwrite);
         }
+
+        private static void Clear()
+            => Console.Clear();
+
+        private static bool IsInRange(string? input, int min, int max, out int output)
+            => int.TryParse(input, out output) && output >= min && output <= max;
     }
 }

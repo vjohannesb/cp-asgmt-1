@@ -8,7 +8,7 @@ namespace CPAsgmt1.Interfaces.IO
 
         string? Read();
         string? Read(string prompt, bool overwrite = false);
-        ConsoleKeyInfo ReadKey(bool intercept);
+        char ReadKey(bool intercept);
         void Write(string content, bool overwrite = false);
         void WriteLine(string content, bool overwrite = false);
 

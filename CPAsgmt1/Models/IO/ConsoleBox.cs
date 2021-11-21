@@ -2,6 +2,7 @@
 
 namespace CPAsgmt1.Models.IO
 {
+    // Simply for prettifying output, no real use hence the static class without interface
     public enum LineType { Top, Middle, Bottom }
     public static class ConsoleBox
     {
@@ -47,15 +48,15 @@ namespace CPAsgmt1.Models.IO
             return left + content + right;
         }
 
-        public static string Line(char content, LineType lineType, bool center = false, char padChar = ' ')
+        public static string Line(LineType lineType, char content, bool center = false, char padChar = ' ')
             => Line(lineType, content.ToString(), center, padChar);
 
         public static string Box(string content)
         {
             var builder = new StringBuilder();
-            builder.AppendLine(Line(_middle, LineType.Top, padChar: _middle));
+            builder.AppendLine(Line(LineType.Top, _middle, padChar: _middle));
             builder.AppendLine(Line(LineType.Middle, content, true));
-            builder.AppendLine(Line(_middle, LineType.Bottom, padChar: _middle));
+            builder.AppendLine(Line(LineType.Bottom, _middle, padChar: _middle));
             return builder.ToString();
         }
     }

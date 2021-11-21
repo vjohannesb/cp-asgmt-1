@@ -8,7 +8,7 @@ namespace CPAsgmt1.Interfaces.Animals
         public Guid AnimalId { get; }
         public string Name { get; set; }
         public ICustomer Owner { get; set; }
-        public IBill? Bill { get; set; } 
+        public IBill? Bill { get; set; }
         public bool IsAtKennel { get; set; }
     }
 }

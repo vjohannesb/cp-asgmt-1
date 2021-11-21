@@ -3,9 +3,9 @@ using CPAsgmt1.Interfaces;
 
 namespace CPAsgmt1
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var container = AFConfig.Configure();
             using var scope = container.BeginLifetimeScope();

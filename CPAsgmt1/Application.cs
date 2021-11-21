@@ -5,7 +5,6 @@ using CPAsgmt1.Interfaces.Customers;
 using CPAsgmt1.Interfaces.IO;
 using CPAsgmt1.Interfaces.Kennel;
 using CPAsgmt1.Interfaces.Menu;
-using System.Linq;
 
 namespace CPAsgmt1
 {
@@ -218,6 +217,9 @@ namespace CPAsgmt1
             _io.WriteLine($"Total: {animal.Bill.TotalCost}kr");
             _io.WriteLine("");
 
+            // If you remove this, you need to implement a PayBills-function,
+            // otherwise a previously checked-in animal cannot be checked in again.
+            // Is, however, outside assignment scope.
             Pause("Your bill is automatically paid.");
             animal.Bill.Pay();
         }

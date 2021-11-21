@@ -22,7 +22,7 @@ namespace CPAsgmt1.Models.Menu
 
         public void AddMenuItem(string name, Action? run)
         {
-            if (_menu == null) 
+            if (_menu == null)
                 throw new Exception("Must initialize menu before adding items.");
 
             _menu.MenuItems = _menu.MenuItems.Append(_createMenuItem(name, run));
