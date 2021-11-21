@@ -12,8 +12,6 @@ namespace CPAsgmt1.Models.Customers
         }
 
         public ICustomer CreateCustomer(string name)
-        {
-            return _createCustomer(name);
-        }
+            => _createCustomer(name);
     }
 }

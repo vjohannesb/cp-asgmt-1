@@ -14,14 +14,10 @@ namespace CPAsgmt1.Models.Kennel
             _createService = createService;
         }
 
-        public IKennel CreateKennel(string name, decimal price)
-        {
-            return _createKennel(name, price);
-        }
+        public IKennel CreateKennel(string name, decimal price) 
+            => _createKennel(name, price);
 
-        public IService CreateService(string name, decimal price)
-        {
-            return _createService(name, price);
-        }
+        public IService CreateService(string name, decimal price) 
+            => _createService(name, price);
     }
 }

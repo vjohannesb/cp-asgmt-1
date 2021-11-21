@@ -51,7 +51,7 @@ namespace CPAsgmt1.Models.IO
         public string ConstructMenu(string title,
             IEnumerable<string> items, string? returnKey)
         {
-            var builder = new StringBuilder();
+            StringBuilder? builder = new();
             builder.Append(ConsoleBox.Box(title));
 
             for (var i = 0; i < items.Count(); i++)
@@ -84,13 +84,13 @@ namespace CPAsgmt1.Models.IO
 
         public IMenuItem? GetSelection(IMenu menu, string prompt, string? returnKey)
         {
-            var keys = menu.MenuItems.Select(mi => mi.Name);
+            IEnumerable<string>? keys = menu.MenuItems.Select(mi => mi.Name);
             return GetSelection(menu.Title, prompt, keys, menu.MenuItems, returnKey);
         }
 
         public void ListItems(string title, IEnumerable<string> items, bool overwrite)
         {
-            var builder = new StringBuilder();
+            StringBuilder? builder = new();
             builder.AppendLine(ConsoleBox.Line(LineType.Top));
             builder.AppendLine(ConsoleBox.Line(LineType.Middle, title, true));
             builder.AppendLine(ConsoleBox.Line(LineType.Bottom));

@@ -15,7 +15,7 @@ namespace CPAsgmt1.Models.Billing
 
         public IBill CreateBill(IAnimal recipient, decimal price, IEnumerable<IService>? services)
         {
-            var bill = _createBill(recipient, price, services);
+            IBill? bill = _createBill(recipient, price, services);
             recipient.Bill = bill;
             return bill;
         }

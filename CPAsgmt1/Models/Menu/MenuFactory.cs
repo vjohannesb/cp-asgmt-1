@@ -15,10 +15,8 @@ namespace CPAsgmt1.Models.Menu
             _createMenuItem = createMenuItem;
         }
 
-        public void InitMenu(string title)
-        {
-            _menu = _createMenu(title, new List<IMenuItem>());
-        }
+        public void InitMenu(string title) 
+            => _menu = _createMenu(title, new List<IMenuItem>());
 
         public void AddMenuItem(string name, Action? run)
         {

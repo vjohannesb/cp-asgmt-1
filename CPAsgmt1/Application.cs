@@ -49,7 +49,7 @@ namespace CPAsgmt1
         {
             while (true)
             {
-                var selection = _io.GetSelection(_mainMenu, "Enter selection: ", "Exit");
+                IMenuItem? selection = _io.GetSelection(_mainMenu, "Enter selection: ", "Exit");
                 if (selection == null) return;
 
                 selection.Run?.Invoke();
@@ -108,9 +108,9 @@ namespace CPAsgmt1
             name = _io.GetAnswer("Register animal", "Name: ", true);
             if (name == null) return;
 
-            var customers = _kennel.GetCustomers();
-            var customerNames = customers.Select(c => c.Name);
-            var owner = _io.GetSelection("Customers", "Select owner: ", customerNames, customers, "Cancel");
+            IEnumerable<ICustomer>? customers = _kennel.GetCustomers();
+            IEnumerable<string>? customerNames = customers.Select(c => c.Name);
+            ICustomer? owner = _io.GetSelection("Customers", "Select owner: ", customerNames, customers, "Cancel");
             if (owner == null) return;
 
             _kennel.AddAnimal(_animalFactory.CreateAnimal(name, owner));
@@ -119,37 +119,37 @@ namespace CPAsgmt1
 
         private void ViewAnimals()
         {
-            var items = _kennel.GetAnimals().Select(a => $"{a.Name} ({a.Owner.Name})");
+            IEnumerable<string>? items = _kennel.GetAnimals().Select(a => $"{a.Name} ({a.Owner.Name})");
             _io.ListItems("Animals", items, true);
             Pause();
         }
 
         private void ViewCustomers()
         {
-            var items = _kennel.GetCustomers().Select(c => c.Name);
+            IEnumerable<string>? items = _kennel.GetCustomers().Select(c => c.Name);
             _io.ListItems("Customers", items, true);
             Pause();
         }
 
         private void ViewAnimalsAtKennel()
         {
-            var items = _kennel.GetAnimals().Where(a => a.IsAtKennel).Select(a => a.Name);
+            IEnumerable<string>? items = _kennel.GetAnimals().Where(a => a.IsAtKennel).Select(a => a.Name);
             _io.ListItems("Animals at kennel", items, true);
             Pause();
         }
 
         private void CheckInAnimal()
         {
-            var animals = _kennel.GetAnimals().Where(a => !a.IsAtKennel);
+            IEnumerable<IAnimal>? animals = _kennel.GetAnimals().Where(a => !a.IsAtKennel);
             if (!animals.Any())
             {
                 Pause("There are no registered animals that are not at the kennel at the moment.");
                 return;
             }
 
-            var keys = animals.Select(a => a.Name);
+            IEnumerable<string>? keys = animals.Select(a => a.Name);
 
-            var animal = _io.GetSelection("Animals", "Select animal: ", keys, animals, "Cancel");
+            IAnimal? animal = _io.GetSelection("Animals", "Select animal: ", keys, animals, "Cancel");
             if (animal == null) return;
 
             if (animal.Bill != null && !animal.Bill.Paid)
@@ -159,11 +159,11 @@ namespace CPAsgmt1
             }
 
             List<IService> selectedServices = new();
-            var availableServices = _kennel.GetServices();
+            IEnumerable<IService>? availableServices = _kennel.GetServices();
             while (availableServices.Any())
             {
-                var serviceNames = availableServices.Select(s => s.Name);
-                var service = _io.GetSelection("Services", "Select service: ", serviceNames, availableServices, "None");
+                IEnumerable<string>? serviceNames = availableServices.Select(s => s.Name);
+                IService? service = _io.GetSelection("Services", "Select service: ", serviceNames, availableServices, "None");
                 if (service == null) break;
 
                 selectedServices.Add(service);
@@ -185,15 +185,15 @@ namespace CPAsgmt1
 
         private void CheckOutAnimal()
         {
-            var animals = _kennel.GetAnimals().Where(a => a.IsAtKennel);
+            IEnumerable<IAnimal>? animals = _kennel.GetAnimals().Where(a => a.IsAtKennel);
             if (!animals.Any())
             {
                 Pause("No animals checked in.");
                 return;
             }
 
-            var keys = animals.Select(a => a.Name);
-            var animal = _io.GetSelection("Animals at kennel", "Select animal to check out: ", keys, animals, "Cancel");
+            IEnumerable<string>? keys = animals.Select(a => a.Name);
+            IAnimal? animal = _io.GetSelection("Animals at kennel", "Select animal to check out: ", keys, animals, "Cancel");
             if (animal == null) return;
 
             if (animal.Bill == null)
@@ -208,7 +208,7 @@ namespace CPAsgmt1
             List<string> billedServices = new() { $"Stay at {_kennel.Name} - {_kennel.CostPerDay}kr" };
             if (animal.Bill.Services != null && animal.Bill.Services.Any())
             {
-                var services = animal.Bill.Services.Select(s => $"{s.Name} - {s.Price}kr");
+                IEnumerable<string>? services = animal.Bill.Services.Select(s => $"{s.Name} - {s.Price}kr");
                 billedServices.AddRange(services);
             }
 

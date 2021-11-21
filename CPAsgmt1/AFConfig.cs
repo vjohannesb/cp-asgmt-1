@@ -19,7 +19,7 @@ namespace CPAsgmt1
     {
         public static IContainer Configure()
         {
-            var builder = new ContainerBuilder();
+            ContainerBuilder? builder = new();
 
             // Register application
             builder.RegisterType<Application>().As<IApplication>();

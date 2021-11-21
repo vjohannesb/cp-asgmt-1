@@ -7,9 +7,9 @@ namespace CPAsgmt1
     {
         private static void Main(string[] args)
         {
-            var container = AFConfig.Configure();
-            using var scope = container.BeginLifetimeScope();
-            var app = scope.Resolve<IApplication>();
+            IContainer? container = AFConfig.Configure();
+            using ILifetimeScope? scope = container.BeginLifetimeScope();
+            IApplication? app = scope.Resolve<IApplication>();
             app.Run();
         }
     }

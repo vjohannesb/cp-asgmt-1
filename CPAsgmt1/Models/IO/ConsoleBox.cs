@@ -16,7 +16,7 @@ namespace CPAsgmt1.Models.IO
 
         private static string PadCenter(string toPad, char padChar = ' ')
         {
-            int padLeft = (_width - toPad.Length) / 2 + toPad.Length;
+            var padLeft = (_width - toPad.Length) / 2 + toPad.Length;
             return toPad.PadLeft(padLeft, padChar).PadRight(_width, padChar);
         }
 
@@ -44,7 +44,9 @@ namespace CPAsgmt1.Models.IO
             if (!string.IsNullOrEmpty(content))
                 if (center) content = PadCenter(content, padChar);
                 else content = content.PadRight(_width, padChar);
-            else content = _middle.ToString().PadRight(_width, _middle);
+            else
+                content = _middle.ToString().PadRight(_width, _middle);
+
             return left + content + right;
         }
 
@@ -53,7 +55,7 @@ namespace CPAsgmt1.Models.IO
 
         public static string Box(string content)
         {
-            var builder = new StringBuilder();
+            StringBuilder? builder = new();
             builder.AppendLine(Line(LineType.Top, _middle, padChar: _middle));
             builder.AppendLine(Line(LineType.Middle, content, true));
             builder.AppendLine(Line(LineType.Bottom, _middle, padChar: _middle));

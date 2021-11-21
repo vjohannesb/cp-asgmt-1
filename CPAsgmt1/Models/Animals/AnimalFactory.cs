@@ -12,8 +12,6 @@ namespace CPAsgmt1.Models.Animals
         }
 
         public IAnimal CreateAnimal(string name, ICustomer owner)
-        {
-            return _createAnimal(name, owner);
-        }
+            => _createAnimal(name, owner);
     }
 }
