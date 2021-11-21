@@ -119,7 +119,9 @@ namespace CPAsgmt1
 
         private void ViewAnimals()
         {
-            IEnumerable<string>? items = _kennel.GetAnimals().Select(a => $"{a.Name} ({a.Owner.Name})");
+            IEnumerable<string>? items = _kennel.GetAnimals()
+                .Select(a => $"{a.Name} ({a.Owner.Name})");
+
             _io.ListItems("Animals", items, true);
             Pause();
         }
@@ -133,7 +135,10 @@ namespace CPAsgmt1
 
         private void ViewAnimalsAtKennel()
         {
-            IEnumerable<string>? items = _kennel.GetAnimals().Where(a => a.IsAtKennel).Select(a => a.Name);
+            IEnumerable<string>? items = _kennel.GetAnimals()
+                .Where(a => a.IsAtKennel)
+                .Select(a => $"{a.Name} ({a.Owner.Name})");
+
             _io.ListItems("Animals at kennel", items, true);
             Pause();
         }
