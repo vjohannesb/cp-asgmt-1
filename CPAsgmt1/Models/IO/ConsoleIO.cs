@@ -51,7 +51,7 @@ namespace CPAsgmt1.Models.IO
         public string ConstructMenu(string title,
             IEnumerable<string> items, string? returnKey)
         {
-            StringBuilder? builder = new();
+            StringBuilder builder = new();
             builder.Append(ConsoleBox.Box(title));
 
             for (var i = 0; i < items.Count(); i++)
@@ -90,7 +90,7 @@ namespace CPAsgmt1.Models.IO
 
         public void ListItems(string title, IEnumerable<string> items, bool overwrite)
         {
-            StringBuilder? builder = new();
+            StringBuilder builder = new();
             builder.AppendLine(ConsoleBox.Line(LineType.Top));
             builder.AppendLine(ConsoleBox.Line(LineType.Middle, title, true));
             builder.AppendLine(ConsoleBox.Line(LineType.Bottom));
