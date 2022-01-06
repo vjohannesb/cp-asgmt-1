@@ -41,6 +41,7 @@ namespace CPAsgmt1
             builder.RegisterType<BillFactory>().As<IBillFactory>();
             builder.RegisterType<AnimalFactory>().As<IAnimalFactory>();
             builder.RegisterType<KennelFactory>().As<IKennelFactory>();
+            builder.RegisterType<ServiceFactory>().As<IServiceFactory>();
             builder.RegisterType<CustomerFactory>().As<ICustomerFactory>();
 
             return builder.Build();

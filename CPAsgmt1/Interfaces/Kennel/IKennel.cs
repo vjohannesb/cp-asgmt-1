@@ -12,12 +12,21 @@ namespace CPAsgmt1.Interfaces.Kennel
         IEnumerable<ICustomer> Customers { get; set; }
         IEnumerable<IService> Services { get; set; }
 
+        void AddAnimal();
+        void CheckInAnimal();
+        void CheckOutAnimal();
+        void ViewAnimals();
+        void ViewAnimalsAtKennel();
         IEnumerable<IAnimal> GetAnimals();
         IEnumerable<IAnimal> GetAnimalsAtKennel();
+
+        void AddCustomer();
+        void ViewCustomers();
         IEnumerable<ICustomer> GetCustomers();
+
+        void AddService();
         IEnumerable<IService> GetServices();
-        void AddAnimal(IAnimal animal);
-        void AddCustomer(ICustomer customer);
-        void AddService(IService service);
+
+
     }
 }
